@@ -89,6 +89,7 @@ Tested on a **Bambu Lab X1 Carbon**, Bambu Studio, matte PLA.
 
 Every photo comes in **4:3** (`_4x3`, web) and **3:4** (`_3x4`, mobile).
 
+- **00 cover:** the bone white hero with the title and three feature pills. Use it as the MakerWorld cover image.
 - **00 group:** three team colorways, each showing a different live sport: Broncos (navy and orange, football), Avalanche (burgundy and blue, hockey), Rockies (purple and silver, baseball). Print it in your team's colors!
 - **01-06:** the stand in **bone white matte PLA**: hero, front, side profile, back, a live hockey game and a live baseball game.
 
