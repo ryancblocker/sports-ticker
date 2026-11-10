@@ -49,15 +49,13 @@ Firmware, phone setup page, the Fusion 360 stand generator and all print files: 
 
 ## Parts list
 
-| Qty | Part | Notes |
-|---|---|---|
-| 1 | **ESP32-2432S028R** "Cheap Yellow Display" (2.8" 320×240 touch) | The case is designed around the **2-USB version** (micro-USB + USB-C) |
-| 1 | **Low-profile 90° USB-C cable** | The one I used: https://www.amazon.com/dp/B0CCJLS4R5. The plug sticks out about 5 mm from the port, and the pod has room for it |
-| 1 | USB power adapter, 5 V / 1 A or more | Any phone charger works |
-| 6 | **M3 heat-set inserts, 4.0 mm OD × 4 mm long** | 4 in the pod front corners, 1 in each rail. The pilot holes are 3.6 mm |
-| 6 | **M3 × 8 mm socket head cap screws** | 4 close the pod and 2 lock the pod to the base |
-| 40 | US pennies | 10 per slot, about 100 g of ballast |
-| ~ | Matte PLA | Bambu Studio shows the exact grams per plate |
+- **1× ESP32-2432S028R "Cheap Yellow Display"** (2.8" 320×240 touch). The case fits the 2-USB version (micro-USB + USB-C).
+- **1× low-profile 90° USB-C cable.** The one I used: https://www.amazon.com/dp/B0CCJLS4R5. The plug sticks out about 5 mm from the port, and the pod has room for it.
+- **1× USB power adapter, 5 V / 1 A or more.** Any phone charger works.
+- **6× M3 heat-set inserts, 4.0 mm OD × 4 mm long.** 4 go in the pod front corners and 1 in each rail. The pilot holes are 3.6 mm.
+- **6× M3 × 8 mm socket head cap screws.** 4 close the pod and 2 lock the pod to the base.
+- **40× US pennies.** 10 per slot, about 100 g of ballast.
+- **Matte PLA.** Bambu Studio shows the exact grams per plate.
 
 **Tools:** a soldering iron with an insert tip (about 220 °C for PLA) and a 2.5 mm hex key.
 
@@ -67,12 +65,10 @@ Firmware, phone setup page, the Fusion 360 stand generator and all print files: 
 
 Tested on a **Bambu Lab X1 Carbon**, Bambu Studio, matte PLA.
 
-| Part | Orientation | Supports |
-|---|---|---|
-| Pod Front | Upright, standing on its edge (best finish on the screen face) | Tree supports, build plate only |
-| Pod Back | Upright, standing on its edge | Tree supports, build plate only (under the screw bosses) |
-| Base | Upright | None needed; the X1C bridges the tops of the penny slots (add build-plate-only tree supports if yours sag) |
-| Penny Lid | Flat, snap arm up | None |
+- **Pod Front:** print upright, standing on its edge (best finish on the screen face). Tree supports, build plate only.
+- **Pod Back:** print upright, standing on its edge. Tree supports, build plate only (under the screw bosses).
+- **Base:** print upright. No supports needed; the X1C bridges the tops of the penny slots. Add build-plate-only tree supports if yours sag.
+- **Penny Lid:** print flat, snap arm up. No supports.
 
 **Tips for a clean finish:** 0.12 mm layers or Variable Layer Height on the curved parts. Seam position set to *Back*, with scarf joint seams turned on. Outer wall speed around 150 mm/s.
 
