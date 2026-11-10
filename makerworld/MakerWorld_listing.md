@@ -27,6 +27,12 @@ Lane loved it. It lives on his desk now, and he hasn't had to pull his phone out
 
 ---
 
+## Software
+
+Firmware, phone setup page, the Fusion 360 stand generator and all print files: **https://github.com/ryancblocker/sports-ticker** (MIT license). Flashing takes one PlatformIO command; the README walks through it.
+
+---
+
 ## Features (firmware)
 
 - Live scores for any teams in 16 leagues: NFL, college football, NBA, WNBA, men's and women's college basketball, MLB, NHL, MLS, Premier League, La Liga, Bundesliga, Serie A, Ligue 1, Liga MX and the Champions League
@@ -83,12 +89,11 @@ Tested on a **Bambu Lab X1 Carbon**, Bambu Studio, matte PLA.
 
 ---
 
-## Colorways shown
+## Photos
 
-- **Bone white**, all matte
-- **Broncos**: navy pod, orange base
-- **Avalanche**: burgundy pod, steel-blue base
+Every photo comes in **4:3** (`_4x3`, web) and **3:4** (`_3x4`, mobile).
 
-Print it in your team's colors!
+- **00 group:** three team colorways, each showing a different live sport: Broncos (navy and orange, football), Avalanche (burgundy and blue, hockey), Rockies (purple and silver, baseball). Print it in your team's colors!
+- **01-06:** the stand in **bone white matte PLA**: hero, front, side profile, back, a live hockey game and a live baseball game.
 
 *The screens in the renders show sample games. The device pulls real scores and logos from ESPN's public data. Team names and logos belong to their respective leagues and teams. This is a fan-made project and isn't affiliated with or endorsed by them.*
