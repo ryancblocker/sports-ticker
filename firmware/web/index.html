@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0d">
+<title>Sports Ticker</title>
+<style>
+:root{--bg:#0b0b0d;--card:#18181b;--line:#2c2c31;--text:#f5f5f7;--sub:#a1a1aa;--acc:#fc4c02;--live:#ff453a;--win:#30d158}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:15px/1.4 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);padding-bottom:100px}
+main{max-width:520px;margin:auto;padding:20px 16px 0}
+h1{margin:0;font-size:28px;line-height:34px;font-weight:800;letter-spacing:-.02em}
+.lede{margin:2px 0 0;font-size:13px;color:var(--sub)}
+.tabs{margin-top:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border-radius:12px;background:var(--card)}
+.tabs button{height:36px;border:0;border-radius:9px;font:inherit;font-size:14px;font-weight:600;color:var(--sub);background:transparent;cursor:pointer}
+.tabs button[aria-selected=true]{color:#0b0b0d;background:var(--text)}
+.panel[hidden]{display:none}
+.h{margin:24px 4px 8px;font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--sub);display:flex;justify-content:space-between}
+.box{border-radius:16px;background:var(--card);overflow:hidden}
+.pad{padding:14px 16px}
+.row{min-height:60px;padding:8px 16px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .t{flex:1;min-width:0}.row .t b{display:block;font-size:15px;font-weight:600}.row .t span{font-size:12px;color:var(--sub)}
+.sw{width:51px;height:31px;flex:none;position:relative;border:0;padding:0;border-radius:16px;cursor:pointer;background:#3f3f46;transition:background .2s}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:14px;background:#fff;transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.sw[aria-pressed=true]{background:var(--acc)}.sw[aria-pressed=true]::after{transform:translateX(20px)}
+.seg{display:grid;gap:4px;padding:4px;border-radius:10px;background:var(--bg);margin-top:8px}
+.seg button{height:36px;border:0;border-radius:8px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--sub);background:transparent}
+.seg button[aria-pressed=true]{color:#0b0b0d;background:var(--text)}
+.lbl{font-size:15px;font-weight:600}.hint{font-size:12px;color:var(--sub)}
+.swatches{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.swatches button{width:44px;height:44px;border-radius:22px;border:0;padding:0;cursor:pointer}
+.swatches button[aria-pressed=true]{box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--text)}
+input[type=range]{width:100%;margin-top:10px;accent-color:var(--acc)}
+select,input[type=search]{font:inherit;font-size:16px;width:100%;height:44px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text)}
+label.s{display:block;font-size:12px;color:var(--sub);margin-bottom:4px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.btn{font:inherit;font-size:15px;font-weight:600;border:0;border-radius:12px;height:44px;padding:0 16px;cursor:pointer;color:var(--text);background:#27272a}
+.btn.warn{color:#ffb4b0}
+.btn.acc{color:#0b0b0d;background:var(--acc);width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.fav{display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid var(--line)}
+.fav:first-child{border-top:0}
+.fav img{width:32px;height:32px;object-fit:contain;flex:none}
+.fav .n{flex:1;min-width:0}.fav .n div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fav .l{font-size:12px;color:var(--sub)}
+.icon{width:40px;height:40px;border:0;border-radius:10px;background:#27272a;color:var(--text);font-size:15px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:10px;max-height:360px;overflow:auto;overscroll-behavior:contain}
+.team{font:inherit;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center;font-size:12px;color:var(--text);cursor:pointer;line-height:1.25}
+.team img{display:block;width:34px;height:34px;object-fit:contain;margin:0 auto 6px}
+.team[aria-pressed=true]{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.empty{color:var(--sub);padding:14px 16px}.grid .empty{grid-column:1/-1;padding:6px 0}
+.g{display:flex;justify-content:space-between;gap:10px;padding:10px 16px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.g:first-child{border-top:0}.live{color:var(--live);font-weight:700}
+.stick{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 35%)}
+.stick div{max-width:488px;margin:auto}
+.stick .btn{height:52px;font-size:16px;font-weight:700;border-radius:14px}
+#toast{position:fixed;left:50%;top:16px;transform:translate(-50%,-90px);background:#27272a;border:1px solid var(--line);padding:10px 16px;border-radius:12px;transition:transform .3s;z-index:9}
+#toast.show{transform:translate(-50%,0)}
+
+/* ---- live preview of the ticker (same geometry as the device, 320x240) ---- */
+.pv-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:20px}
+.pv-bezel{padding:12px;border-radius:20px;background:#1c1c20;border:1px solid var(--line)}
+.pv-scale{width:320px;height:240px}
+.pv{--pbg:#0b0b0d;--psurf:#18181b;--ptext:#f5f5f7;--psub:#a1a1aa;--pdim:#8e8e96;--pdot:#3f3f46;--plive:#ff453a;--pacc:#fc4c02;
+  width:320px;height:240px;overflow:hidden;border-radius:4px;display:flex;flex-direction:column;background:var(--pbg);color:var(--ptext);font-variant-numeric:tabular-nums}
+.pv.light{--pbg:#f2f2f5;--psurf:#fff;--ptext:#111113;--psub:#5c5c63;--pdim:#6b6b73;--pdot:#c7c7ce;--plive:#d70015}
+.pv .hd{height:28px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--psub)}
+.pv .hero{flex:1;min-height:0;display:flex;align-items:center;padding:0 8px}
+.pv .col{width:84px;flex:none;display:flex;flex-direction:column;align-items:center}
+.pv .col img{object-fit:contain}
+.pv .ab{height:20px;margin-top:4px;display:flex;align-items:center;gap:4px;font-size:15px;font-weight:700}
+.pv .rec{height:14px;font-size:11px;font-weight:500;color:var(--psub);display:flex;align-items:center;gap:6px}
+.pv .to{display:flex;gap:2px}.pv .to i{width:6px;height:3px;border-radius:1px;background:var(--pdot)}.pv .to i.on{background:var(--ptext)}
+.pv .favbar{width:16px;height:3px;margin-top:4px;border-radius:2px}
+.pv .mid{flex:1;display:flex;align-items:center;justify-content:space-between}
+.pv .sc{font-size:40px;line-height:44px;font-weight:700;letter-spacing:-.02em}
+.pv .st{display:flex;flex-direction:column;align-items:center;gap:2px}
+.pv .per{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--plive)}
+.pv .per i{width:6px;height:6px;border-radius:3px;background:var(--plive)}
+.pv .fc{flex:none;height:84px;margin:0 10px;padding:6px 12px;border-radius:12px;display:flex;flex-direction:column;gap:4px;background:var(--psurf)}
+.pv .r1,.pv .r3{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pv .r1{height:16px;font-size:13px}.pv .r3{height:14px;font-size:11px;color:var(--psub)}
+.pv .field{position:relative;width:276px;height:34px;border-radius:6px;overflow:hidden;background:#1e6b3a}
+.pv .field>*{position:absolute;top:0;bottom:0}
+.pv .ez{width:30px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.pv .dots{height:20px;flex:none;display:flex;align-items:center;justify-content:center;gap:6px}
+.pv .dots i{width:5px;height:5px;border-radius:3px;background:var(--pdot)}.pv .dots i.on{width:14px;background:var(--pacc)}
+@media (max-width:370px){.pv-scale{width:288px;height:216px}.pv{transform:scale(.9);transform-origin:0 0}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Sports Ticker</h1>
+  <p class="lede">Change anything, then tap Save to send it to the ticker.</p>
+
+  <div class="tabs" role="tablist" aria-label="Settings sections">
+    <button role="tab" id="tab-teams" aria-controls="p-teams" aria-selected="true">Teams</button>
+    <button role="tab" id="tab-display" aria-controls="p-display" aria-selected="false">Display</button>
+    <button role="tab" id="tab-device" aria-controls="p-device" aria-selected="false">Device</button>
+  </div>
+
+  <!-- ================= TEAMS ================= -->
+  <section class="panel" id="p-teams" role="tabpanel" aria-labelledby="tab-teams">
+    <div class="h"><span>MY TEAMS</span><span id="cnt"></span></div>
+    <div class="box" id="favs"></div>
+    <div class="h">ADD TEAMS</div>
+    <div class="box pad">
+      <label class="s" for="league">League</label>
+      <select id="league"></select>
+      <input id="q" type="search" placeholder="Search teams…" style="margin-top:8px" aria-label="Search teams">
+      <div class="grid" id="teams"></div>
+    </div>
+  </section>
+
+  <!-- ================= DISPLAY ================= -->
+  <section class="panel" id="p-display" role="tabpanel" aria-labelledby="tab-display" hidden>
+    <div class="pv-wrap">
+      <div class="pv-bezel"><div class="pv-scale"><div class="pv" id="pv" aria-label="Preview of the ticker screen">
+        <div class="hd"><span>NFL</span><span><span>Last updated 7:41 PM</span><span id="pv-clock" style="color:var(--ptext);margin-left:10px">7:42 PM</span></span></div>
+        <div class="hero">
+          <div class="col">
+            <img class="pv-logo" data-team="kc" alt="Kansas City Chiefs">
+            <div class="ab">Chiefs</div>
+            <div class="rec pv-rec">7-2<span class="to"><i class="on"></i><i></i><i></i></span></div>
+            <div class="favbar"></div>
+          </div>
+          <div class="mid">
+            <div class="sc" style="color:var(--pdim)">17</div>
+            <div class="st"><div class="per"><i></i>Q4</div><div style="font-size:13px;font-weight:600">2:14</div></div>
+            <div class="sc">21</div>
+          </div>
+          <div class="col">
+            <img class="pv-logo" data-team="den" alt="Denver Broncos">
+            <div class="ab"><svg width="13" height="9" viewBox="0 0 13 9" aria-hidden="true"><ellipse cx="6.5" cy="4.5" rx="6" ry="4" fill="var(--pacc)"/></svg>Broncos</div>
+            <div class="rec pv-rec">6-3<span class="to"><i class="on"></i><i class="on"></i><i></i></span></div>
+            <div class="favbar" style="background:var(--pacc)"></div>
+          </div>
+        </div>
+        <div class="fc" id="pv-field">
+          <div class="r1"><span><b>3rd &amp; 4</b> <span style="color:var(--psub);font-weight:500">at KC 32</span></span><span style="font-size:11px;font-weight:600;color:var(--psub)">Win <span style="color:var(--ptext)">DEN 64%</span></span></div>
+          <div class="field" aria-hidden="true">
+            <div class="ez" style="left:0;background:#e31837;color:#fff">KC</div>
+            <div class="ez" style="right:0;background:#0a2343;color:#fc4c02">DEN</div>
+            <div style="left:51px;width:1px;background:rgba(255,255,255,.22)"></div><div style="left:73px;width:1px;background:rgba(255,255,255,.22)"></div>
+            <div style="left:95px;width:1px;background:rgba(255,255,255,.22)"></div><div style="left:116px;width:1px;background:rgba(255,255,255,.22)"></div>
+            <div style="left:138px;width:1px;background:rgba(255,255,255,.55)"></div><div style="left:159px;width:1px;background:rgba(255,255,255,.22)"></div>
+            <div style="left:181px;width:1px;background:rgba(255,255,255,.22)"></div><div style="left:203px;width:1px;background:rgba(255,255,255,.22)"></div>
+            <div style="left:224px;width:1px;background:rgba(255,255,255,.22)"></div>
+            <div style="left:99px;width:47px;background:var(--pacc);opacity:.4"></div>
+            <div style="left:90px;width:2px;background:#ffd60a"></div>
+            <div style="left:98px;width:2px;background:#4da3ff"></div>
+            <div style="left:91px;top:11px;bottom:auto;width:16px;height:12px;border-radius:50%;background:#8a4b22;border:1px solid #fff"></div>
+          </div>
+          <div class="r3"><span>Drive: 8 plays · 54 yds · 4:12</span><span>from DEN 46</span></div>
+        </div>
+        <div class="dots"><i></i><i class="on"></i><i></i><i></i></div>
+      </div></div></div>
+      <div class="hint">Live preview · actual ticker size</div>
+    </div>
+
+    <div class="h">APPEARANCE</div>
+    <div class="box pad">
+      <div class="lbl">Theme</div>
+      <div class="seg" style="grid-template-columns:repeat(2,minmax(0,1fr))" data-seg="theme"></div>
+      <div class="lbl" style="margin-top:18px">Accent color</div>
+      <div class="hint">Marks his team, possession and switches</div>
+      <div class="swatches" id="swatches"></div>
+      <div class="hint" id="accentName" style="margin-top:8px"></div>
+      <div class="lbl" style="margin-top:18px">Logo size</div>
+      <div class="seg" style="grid-template-columns:repeat(3,minmax(0,1fr))" data-seg="logoSize"></div>
+    </div>
+
+    <div class="h">SHOW ON GAME CARDS</div>
+    <div class="box" data-toggles="showRecords,showSituation,showClock,showTV,showCountdown,showLinescore"></div>
+
+    <div class="h">LAYOUT &amp; ROTATION</div>
+    <div class="box">
+      <div data-toggles="showSummary"></div>
+      <div class="pad" style="border-top:1px solid var(--line)">
+        <div class="lbl">Seconds per page</div>
+        <div class="hint">Live games always take priority</div>
+        <div class="seg" style="grid-template-columns:repeat(4,minmax(0,1fr))" data-seg="rotateSec"></div>
+      </div>
+    </div>
+
+    <div class="h">SCORE ALERTS</div>
+    <div class="box" data-toggles="celebrate,led,oppAlert"></div>
+
+    <div class="h">BRIGHTNESS</div>
+    <div class="box">
+      <div class="pad">
+        <div style="display:flex;justify-content:space-between"><label class="lbl" for="brightness">Daytime</label><span class="hint" id="bv"></span></div>
+        <input id="brightness" type="range" min="10" max="255">
+      </div>
+      <div data-toggles="night"></div>
+      <div id="nightBox">
+        <div class="two" style="padding:4px 16px 0">
+          <div><label class="s" for="nightStart">From</label><select id="nightStart"></select></div>
+          <div><label class="s" for="nightEnd">Until</label><select id="nightEnd"></select></div>
+        </div>
+        <div class="pad">
+          <div style="display:flex;justify-content:space-between"><label class="lbl" for="nightBrightness">Night brightness</label><span class="hint" id="nbv"></span></div>
+          <input id="nightBrightness" type="range" min="0" max="255">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DEVICE ================= -->
+  <section class="panel" id="p-device" role="tabpanel" aria-labelledby="tab-device" hidden>
+    <div class="h">ON THE TICKER NOW</div>
+    <div class="box" id="games"><div class="empty">Loading…</div></div>
+
+    <div class="h">TEST THE SCREENS</div>
+    <div class="box pad">
+      <div class="hint" style="margin-bottom:10px">Shows every screen with sample games: live football, hockey, basketball, baseball, upcoming, final, summary, score alert, and more. Tap the ticker to step through; hold it to stop.</div>
+      <div class="btns"><button class="btn acc" id="demoOn" style="width:auto;flex:1">Start demo on ticker</button><button class="btn" id="demoOff">Stop</button></div>
+    </div>
+
+    <div class="h">CLOCK &amp; SCREEN</div>
+    <div class="box">
+      <div class="pad"><label class="s" for="tz">Time zone</label><select id="tz"></select></div>
+      <div data-toggles="use24h,flip,invert"></div>
+    </div>
+
+    <div class="h">DEVICE</div>
+    <div class="box pad">
+      <div class="hint" id="dev" style="margin-bottom:10px">—</div>
+      <div class="btns">
+        <button class="btn" data-act="recalibrate">Recalibrate touch</button>
+        <button class="btn" data-act="restart">Restart</button>
+        <button class="btn warn" data-act="wifi-reset">Forget Wi-Fi</button>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="stick"><div><button class="btn acc" id="save">Save to ticker</button></div></div>
+<div id="toast" role="status"></div>
+
+<script>
+const LEAGUES=[["football","nfl","NFL","NFL"],["football","college-football","NCAAF","College Football"],
+ ["basketball","nba","NBA","NBA"],["basketball","wnba","WNBA","WNBA"],
+ ["basketball","mens-college-basketball","NCAAM","Men's College Basketball"],["basketball","womens-college-basketball","NCAAW","Women's College Basketball"],
+ ["baseball","mlb","MLB","MLB"],["hockey","nhl","NHL","NHL"],
+ ["soccer","usa.1","MLS","MLS"],["soccer","eng.1","EPL","Premier League"],["soccer","esp.1","LALIGA","La Liga"],["soccer","ger.1","BUND","Bundesliga"],
+ ["soccer","ita.1","SERIE A","Serie A"],["soccer","fra.1","LIGUE 1","Ligue 1"],["soccer","mex.1","LIGA MX","Liga MX"],["soccer","uefa.champions","UCL","Champions League"]];
+const TZS=[["US Eastern","EST5EDT,M3.2.0,M11.1.0"],["US Central","CST6CDT,M3.2.0,M11.1.0"],["US Mountain","MST7MDT,M3.2.0,M11.1.0"],["Arizona","MST7"],["US Pacific","PST8PDT,M3.2.0,M11.1.0"],["Alaska","AKST9AKDT,M3.2.0,M11.1.0"],["Hawaii","HST10"],["UK / Ireland","GMT0BST,M3.5.0/1,M10.5.0"],["Central Europe","CET-1CEST,M3.5.0,M10.5.0/3"],["Eastern Europe","EET-2EEST,M3.5.0/3,M10.5.0/4"],["Australia East","AEST-10AEDT,M10.1.0,M4.1.0/3"],["UTC","UTC0"]];
+const ACCENTS=[["team","Follow his team's colors"],["0a84ff","Blue"],["30d158","Green"],["bf5af2","Purple"],["ffd60a","Gold"]];
+const TOGGLES={showRecords:["Team records","e.g. 6-3 under each team"],showSituation:["Game situation","Field, down & distance, bases, last play"],
+ showClock:["Clock in header","Current time, top right"],showTV:["TV channel","Where to watch upcoming games"],
+ showCountdown:["Countdown","“in 2h 18m” before games"],showLinescore:["Score by period","Quarter / period table on finals"],
+ showSummary:["My Teams page","All teams at a glance, first page"],celebrate:["Score celebration","Full-screen TOUCHDOWN / GOAL"],
+ led:["Flash the LED","Board light blinks in team colors"],oppAlert:["Opponent scores too","Small banner when they score"],
+ night:["Dim at night","Lower brightness on a schedule"],use24h:["24-hour clock",""],flip:["Flip screen","Turn the picture upside down"],
+ invert:["Invert colors","Only if colors look like a negative"]};
+const SEGS={theme:[[0,"Dark"],[1,"Light"]],logoSize:[[0,"Small"],[1,"Medium"],[2,"Large"]],rotateSec:[[5,"5s"],[8,"8s"],[15,"15s"],[30,"30s"]]};
+const DEFAULTS={tz:"EST5EDT,M3.2.0,M11.1.0",brightness:200,nightBrightness:25,night:true,nightStart:23,nightEnd:7,theme:0,accent:"team",logoSize:2,
+ showRecords:true,showSituation:true,showClock:true,showTV:true,showCountdown:true,showLinescore:true,showSummary:true,rotateSec:8,
+ celebrate:true,led:true,oppAlert:false,use24h:false,invert:false,flip:false,teams:[]};
+const MAX=8,$=id=>document.getElementById(id);
+let cfg={...DEFAULTS},ALL=null,cache={},dirty=false,online=true;
+
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function toast(t){const el=$("toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),2400)}
+function markDirty(){dirty=true;$("save").textContent="Save to ticker •"}
+function hourLabel(h){return (h%12||12)+(h<12?" AM":" PM")}
+
+// ---------- tabs ----------
+const TABS=["teams","display","device"];
+function showTab(name){for(const t of TABS){$("tab-"+t).setAttribute("aria-selected",t===name);$("p-"+t).hidden=t!==name}if(name==="device")status()}
+TABS.forEach(t=>$("tab-"+t).onclick=()=>showTab(t));
+
+// ---------- favorites ----------
+function renderFavs(){
+  $("cnt").textContent=`${cfg.teams.length} / ${MAX}`;
+  $("favs").innerHTML=cfg.teams.length?cfg.teams.map((t,i)=>`
+    <div class="fav">${t.logo?`<img src="${esc(t.logo)}" alt="">`:""}
+      <div class="n"><div>${esc(t.name)}</div><div class="l">${esc(t.label)}</div></div>
+      <button class="icon" aria-label="Move ${esc(t.name)} up" onclick="mv(${i},-1)">↑</button>
+      <button class="icon" aria-label="Move ${esc(t.name)} down" onclick="mv(${i},1)">↓</button>
+      <button class="icon" aria-label="Remove ${esc(t.name)}" onclick="rm(${i})">✕</button></div>`).join(""):`<div class="empty">No teams yet. Add some below.</div>`;
+  renderTeams();
+}
+function mv(i,d){const j=i+d;if(j<0||j>=cfg.teams.length)return;[cfg.teams[i],cfg.teams[j]]=[cfg.teams[j],cfg.teams[i]];markDirty();renderFavs()}
+function rm(i){cfg.teams.splice(i,1);markDirty();renderFavs()}
+function cur(){return LEAGUES[$("league").value]}
+async function loadLeague(){
+  const [s,l,label]=cur(),key=s+"/"+l;
+  if(!ALL){$("teams").innerHTML=`<div class="empty">Loading teams…</div>`;
+    try{ALL=await (await fetch("teams.json")).json()}catch(e){$("teams").innerHTML=`<div class="empty">Couldn't load the team list.</div>`;return}}
+  if(!cache[key])cache[key]=(ALL.leagues[key]||[]).map(([id,abbr,name,color,logo])=>({sport:s,league:l,label,id,abbr,name,color,
+    logo:logo?(logo.startsWith("http")?logo:ALL.cdn+logo):""}));
+  renderTeams();
+}
+function renderTeams(){
+  const [s,l]=cur(),list=cache[s+"/"+l];if(!list)return;
+  const q=$("q").value.trim().toLowerCase();
+  const shown=list.filter(t=>!q||t.name.toLowerCase().includes(q)||t.abbr.toLowerCase().includes(q));
+  $("teams").innerHTML=shown.length?shown.map(t=>{const on=cfg.teams.some(f=>f.league===t.league&&f.id===t.id);
+    return `<button type="button" class="team" data-id="${esc(t.id)}" aria-pressed="${on}">${t.logo?`<img src="${esc(t.logo)}" alt="" loading="lazy">`:""}${esc(t.name)}</button>`}).join(""):`<div class="empty">No matches.</div>`;
+}
+$("teams").addEventListener("click",e=>{
+  const el=e.target.closest(".team");if(!el)return;
+  const [s,l]=cur(),t=cache[s+"/"+l].find(x=>x.id===el.dataset.id);
+  const i=cfg.teams.findIndex(f=>f.league===t.league&&f.id===t.id);
+  if(i>=0)cfg.teams.splice(i,1);else{if(cfg.teams.length>=MAX)return toast(`That's the max (${MAX} teams)`);cfg.teams.push({...t});toast(`Added ${t.name}`)}
+  markDirty();renderFavs();
+});
+
+// ---------- display controls ----------
+function renderToggles(){
+  document.querySelectorAll("[data-toggles]").forEach(box=>{
+    box.innerHTML=box.dataset.toggles.split(",").map(k=>`<div class="row"><div class="t"><b>${esc(TOGGLES[k][0])}</b>${TOGGLES[k][1]?`<span>${esc(TOGGLES[k][1])}</span>`:""}</div>
+      <button type="button" class="sw" data-key="${k}" aria-label="${esc(TOGGLES[k][0])}" aria-pressed="${!!cfg[k]}"></button></div>`).join("");
+  });
+  document.querySelectorAll("[data-seg]").forEach(box=>{const k=box.dataset.seg;
+    box.innerHTML=SEGS[k].map(([v,l])=>`<button type="button" data-key="${k}" data-val="${v}" aria-pressed="${cfg[k]==v}">${l}</button>`).join("")});
+  $("swatches").innerHTML=ACCENTS.map(([v,l])=>`<button type="button" data-accent="${v}" aria-label="${esc(l)}" aria-pressed="${cfg.accent===v}" style="background:#${v==="team"?teamAccent():v}"></button>`).join("");
+  $("accentName").textContent=(ACCENTS.find(a=>a[0]===cfg.accent)||ACCENTS[0])[1];
+  $("nightBox").hidden=!cfg.night;
+  preview();
+}
+document.addEventListener("click",e=>{
+  const sw=e.target.closest(".sw");if(sw){cfg[sw.dataset.key]=!cfg[sw.dataset.key];markDirty();renderToggles();return}
+  const sg=e.target.closest(".seg button");if(sg){cfg[sg.dataset.key]=+sg.dataset.val;markDirty();renderToggles();return}
+  const ac=e.target.closest("[data-accent]");if(ac){cfg.accent=ac.dataset.accent;markDirty();renderToggles()}
+});
+function teamAccent(){return "fc4c02"}  // preview team (Broncos) accent when following team colors
+function preview(){
+  const pv=$("pv");pv.classList.toggle("light",cfg.theme==1);
+  const acc="#"+(cfg.accent==="team"?teamAccent():cfg.accent);
+  pv.style.setProperty("--pacc",acc);
+  document.documentElement.style.setProperty("--acc",acc);
+  const size=[40,48,56][cfg.logoSize]??56,dark=cfg.theme!=1;
+  pv.querySelectorAll(".pv-logo").forEach(img=>{img.width=img.height=size;img.style.width=img.style.height=size+"px";
+    img.src=`https://a.espncdn.com/i/teamlogos/nfl/${dark?"500-dark":"500"}/${img.dataset.team}.png`});
+  pv.querySelectorAll(".pv-rec").forEach(el=>el.style.visibility=cfg.showRecords?"visible":"hidden");
+  $("pv-field").style.display=cfg.showSituation?"flex":"none";
+  pv.querySelector(".dots").style.height=cfg.showSituation?"20px":"28px";
+  $("pv-clock").style.display=cfg.showClock?"":"none";
+  $("bv").textContent=Math.round($("brightness").value/2.55)+"%";
+  $("nbv").textContent=Math.round($("nightBrightness").value/2.55)+"%";
+}
+for(const k of ["brightness","nightBrightness"])$(k).addEventListener("input",()=>{cfg[k]=+$(k).value;markDirty();preview()});
+for(const k of ["nightStart","nightEnd","tz"])$(k).addEventListener("change",()=>{cfg[k]=k==="tz"?$(k).value:+$(k).value;markDirty()});
+
+function fillSelects(){
+  $("league").innerHTML=LEAGUES.map((x,i)=>`<option value="${i}">${esc(x[3])}</option>`).join("");
+  $("tz").innerHTML=TZS.map(([n,v])=>`<option value="${esc(v)}">${esc(n)}</option>`).join("");
+  const hours=[...Array(24).keys()].map(h=>`<option value="${h}">${hourLabel(h)}</option>`).join("");
+  $("nightStart").innerHTML=hours;$("nightEnd").innerHTML=hours;
+}
+function applyCfg(){
+  if(cfg.tz&&!TZS.some(x=>x[1]===cfg.tz))$("tz").insertAdjacentHTML("beforeend",`<option value="${esc(cfg.tz)}">Custom (${esc(cfg.tz)})</option>`);
+  $("tz").value=cfg.tz;
+  for(const k of ["brightness","nightBrightness","nightStart","nightEnd"])$(k).value=cfg[k];
+  renderToggles();renderFavs();
+}
+
+// ---------- save + device actions ----------
+async function post(path,body){const r=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):"{}"});return r.json()}
+$("save").onclick=async()=>{
+  if(!online)return toast("Not connected to the ticker");
+  try{const j=await post("/api/config",cfg);if(!j.ok)throw new Error(j.error||"save failed");
+    dirty=false;$("save").textContent="Save to ticker";toast("Saved! The ticker is updating.");setTimeout(status,4000)}
+  catch(e){toast("Couldn't save: "+e.message)}
+};
+$("demoOn").onclick=async()=>{try{await post("/api/demo",{on:true});toast("Demo started. Look at the ticker!")}catch(e){toast("Ticker not reachable")}};
+$("demoOff").onclick=async()=>{try{await post("/api/demo",{on:false});toast("Demo stopped")}catch(e){toast("Ticker not reachable")}};
+$("league").onchange=()=>{$("q").value="";loadLeague()};
+$("q").oninput=renderTeams;
+document.querySelectorAll("[data-act]").forEach(b=>b.onclick=async()=>{
+  const act=b.dataset.act;
+  const msg={"wifi-reset":"Forget Wi-Fi? The ticker will start its setup hotspot again.","restart":"Restart the ticker?","recalibrate":"Restart and recalibrate the touch screen?"}[act];
+  if(!confirm(msg))return;
+  try{await post("/api/"+act);toast("Done. Restarting…")}catch(e){toast("Request failed")}
+});
+window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
+
+// ---------- live status ----------
+function fmtGame(t){
+  if(t.state==="none")return [`${esc(t.abbr)} <span class="hint">${esc(t.record||"")}</span>`,"No upcoming games"];
+  if(t.state==="loading"||!t.away)return [esc(t.abbr),"Loading…"];
+  const pre=t.state==="pre";
+  const left=pre?`${esc(t.away.abbr)} @ ${esc(t.home.abbr)}`:`${esc(t.away.abbr)} ${esc(t.away.score)} – ${esc(t.home.score)} ${esc(t.home.abbr)}`;
+  const when=pre&&t.start?new Date(t.start*1000).toLocaleString([], {weekday:"short",hour:"numeric",minute:"2-digit"}):esc(t.detail);
+  return [left,t.state==="in"?`<span class="live">● ${esc(t.detail)}</span>`:when];
+}
+async function status(){
+  try{const s=await (await fetch("/api/status")).json();online=true;
+    $("games").innerHTML=s.teams.length?s.teams.map(t=>{const [a,b]=fmtGame(t);return `<div class="g"><span>${a}</span><span class="hint">${b}</span></div>`}).join(""):`<div class="empty">Nothing yet. Add a team.</div>`;
+    $("dev").textContent=`${s.ssid} · ${s.rssi} dBm · ${s.ip} · ${Math.round(s.heap/1024)} KB free · up ${Math.round(s.uptime/60)} min`;
+  }catch(e){online=false;$("games").innerHTML=`<div class="empty">Ticker not reachable (preview mode).</div>`}
+}
+
+fillSelects();
+fetch("/api/config").then(r=>r.json()).then(c=>{cfg={...DEFAULTS,...c};applyCfg()}).catch(()=>{online=false;applyCfg()});
+loadLeague();setInterval(()=>{if(!$("p-device").hidden)status()},15000);
+</script>
+</body>
+</html>

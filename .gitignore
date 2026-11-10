@@ -1,0 +1,5 @@
+.pio/
+.vscode/
+*.f3d.bak
+.DS_Store
+.claude/
