@@ -59,7 +59,8 @@ static bool parseInto(const String& json, Settings& s, std::vector<FavTeam>& out
   s.showCountdown = doc["showCountdown"] | true;
   s.showLinescore = doc["showLinescore"] | true;
   s.showSummary = doc["showSummary"] | true;
-  s.rotateSec = clampInt(doc["rotateSec"] | 8, 3, 120);
+  int rs = doc["rotateSec"] | 8;  // 0 = never auto-advance (touch only)
+  s.rotateSec = rs <= 0 ? 0 : clampInt(rs, 3, 120);
   s.celebrate = doc["celebrate"] | true;
   s.led = doc["led"] | true;
   s.oppAlert = doc["oppAlert"] | false;

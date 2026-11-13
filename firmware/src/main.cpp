@@ -774,7 +774,7 @@ void loop() {
       dataDirty = true;
     }
     bool idle = now - lastTouch > 30000;
-    if (idle && now - lastFlip > settings.rotateSec * 1000UL && !banner.on) {
+    if (settings.rotateSec && idle && now - lastFlip > settings.rotateSec * 1000UL && !banner.on) {
       lastFlip = now;
       int before = page;
       autoAdvance();

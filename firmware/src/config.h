@@ -25,7 +25,7 @@ struct Settings {
   bool showLinescore = true;
   // layout
   bool showSummary = true;
-  uint16_t rotateSec = 8;
+  uint16_t rotateSec = 8;  // 0 = off: pages change only on touch
   // alerts
   bool celebrate = true;
   bool led = true;

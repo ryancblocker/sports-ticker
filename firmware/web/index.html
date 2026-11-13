@@ -180,8 +180,8 @@ label.s{display:block;font-size:12px;color:var(--sub);margin-bottom:4px}
       <div data-toggles="showSummary"></div>
       <div class="pad" style="border-top:1px solid var(--line)">
         <div class="lbl">Seconds per page</div>
-        <div class="hint">Live games always take priority</div>
-        <div class="seg" style="grid-template-columns:repeat(4,minmax(0,1fr))" data-seg="rotateSec"></div>
+        <div class="hint">Live games always take priority. Off = only changes when you tap</div>
+        <div class="seg" style="grid-template-columns:repeat(5,minmax(0,1fr))" data-seg="rotateSec"></div>
       </div>
     </div>
 
@@ -255,7 +255,7 @@ const TOGGLES={showRecords:["Team records","e.g. 6-3 under each team"],showSitua
  led:["Flash the LED","Board light blinks in team colors"],oppAlert:["Opponent scores too","Small banner when they score"],
  night:["Dim at night","Lower brightness on a schedule"],use24h:["24-hour clock",""],flip:["Flip screen","Turn the picture upside down"],
  invert:["Invert colors","Only if colors look like a negative"]};
-const SEGS={theme:[[0,"Dark"],[1,"Light"]],logoSize:[[0,"Small"],[1,"Medium"],[2,"Large"]],rotateSec:[[5,"5s"],[8,"8s"],[15,"15s"],[30,"30s"]]};
+const SEGS={theme:[[0,"Dark"],[1,"Light"]],logoSize:[[0,"Small"],[1,"Medium"],[2,"Large"]],rotateSec:[[5,"5s"],[8,"8s"],[15,"15s"],[30,"30s"],[0,"Off"]]};
 const DEFAULTS={tz:"EST5EDT,M3.2.0,M11.1.0",brightness:200,nightBrightness:25,night:true,nightStart:23,nightEnd:7,theme:0,accent:"team",logoSize:2,
  showRecords:true,showSituation:true,showClock:true,showTV:true,showCountdown:true,showLinescore:true,showSummary:true,rotateSec:8,
  celebrate:true,led:true,oppAlert:false,use24h:false,invert:false,flip:false,teams:[]};
